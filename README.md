@@ -73,7 +73,7 @@ Inside a zone, users can:
 
 1. Navigate to the project directory:
 ```bash
-cd "C:\Users\bala\Downloads\New folder"
+git clone https://github.com/samisrael/phylax
 ```
 
 2. Install dependencies (already done):
