@@ -74,6 +74,7 @@ Inside a zone, users can:
 1. Navigate to the project directory:
 ```bash
 git clone https://github.com/samisrael/phylax
+cd phylax
 ```
 
 2. Install dependencies (already done):
