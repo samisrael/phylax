@@ -6,7 +6,7 @@ A complete, production-ready disaster monitoring and relief coordination web app
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 1. [Project Overview](#project-overview)
 2. [Architecture](#architecture)
@@ -158,7 +158,7 @@ Authorization: Bearer {jwt_token}
 
 ---
 
-## 🔐 Authentication Endpoints
+## Authentication Endpoints
 
 ### Register User
 **POST** `/auth/register`
@@ -208,7 +208,7 @@ Response (200): Same as Register
 
 ---
 
-## 🌍 Environmental Data Endpoints
+## Environmental Data Endpoints
 
 ### Get Current Environmental Data
 **GET** `/environment/current?latitude={lat}&longitude={lng}`
@@ -227,7 +227,7 @@ Response (200):
 
 ---
 
-## 🗺️ Zone Endpoints
+## Zone Endpoints
 
 ### Get All Zones (Public)
 **GET** `/zones`
@@ -256,7 +256,7 @@ Response (200): Single zone object
 ---
 
 ### Create Zone (Admin Only)
-**POST** `/zones` 🔒 Admin
+**POST** `/zones` Admin
 
 Request:
 ```json
@@ -275,7 +275,7 @@ Response (201): Created zone
 ---
 
 ### Update Zone (Admin Only)
-**PUT** `/zones/{id}` 🔒 Admin
+**PUT** `/zones/{id}` Admin
 
 Request: Same as Create
 
@@ -284,7 +284,7 @@ Response (200): Updated zone
 ---
 
 ### Delete Zone (Admin Only)
-**DELETE** `/zones/{id}` 🔒 Admin
+**DELETE** `/zones/{id}` Admin
 
 Response (200): `{ "message": "Zone deleted successfully" }`
 
@@ -305,16 +305,16 @@ Response (200): Matching zones
 ---
 
 ### Update Zone Risk Score (Admin Only)
-**PUT** `/zones/{id}/risk-score?riskScore={score}` 🔒 Admin
+**PUT** `/zones/{id}/risk-score?riskScore={score}` Admin
 
 Response (200): Updated zone
 
 ---
 
-## 🤝 Contribution Endpoints
+## Contribution Endpoints
 
 ### Create Contribution (Authenticated)
-**POST** `/contributions` 🔒 Auth
+**POST** `/contributions` Auth
 
 Request:
 ```json
@@ -331,14 +331,14 @@ Response (201): Created contribution
 ---
 
 ### Get My Contributions (Authenticated)
-**GET** `/contributions/my-contributions` 🔒 Auth
+**GET** `/contributions/my-contributions` Auth
 
 Response (200): User's contributions
 
 ---
 
 ### Get Contributions by User (Authenticated)
-**GET** `/contributions/user/{userId}` 🔒 Auth
+**GET** `/contributions/user/{userId}` Auth
 
 Response (200): User's contributions
 
@@ -364,7 +364,7 @@ Response (200):
 ---
 
 ### Update Contribution (Authenticated)
-**PUT** `/contributions/{id}` 🔒 Auth
+**PUT** `/contributions/{id}` Auth
 
 Request: Same as Create
 
@@ -375,7 +375,7 @@ Response (200): Updated contribution
 ---
 
 ### Delete Contribution (Authenticated)
-**DELETE** `/contributions/{id}` 🔒 Auth
+**DELETE** `/contributions/{id}` Auth
 
 Response (200): `{ "message": "Contribution deleted successfully" }`
 
@@ -383,24 +383,24 @@ Response (200): `{ "message": "Contribution deleted successfully" }`
 
 ---
 
-## 👥 User Management Endpoints (Admin Only)
+## User Management Endpoints (Admin Only)
 
 ### Get All Users
-**GET** `/users` 🔒 Admin
+**GET** `/users` Admin
 
 Response (200): List of all users
 
 ---
 
 ### Get User by ID
-**GET** `/users/{id}` 🔒 Admin
+**GET** `/users/{id}` Admin
 
 Response (200): User details
 
 ---
 
 ### Update User Role
-**PUT** `/users/{userId}/role` 🔒 Admin
+**PUT** `/users/{userId}/role` Admin
 
 Request:
 ```json
@@ -414,14 +414,14 @@ Response (200): Updated user
 ---
 
 ### Delete User
-**DELETE** `/users/{id}` 🔒 Admin
+**DELETE** `/users/{id}` Admin
 
 Response (200): `{ "message": "User deleted successfully" }`
 
 ---
 
 ### Update Own Profile
-**PUT** `/users/profile/update` 🔒 Auth
+**PUT** `/users/profile/update`   Auth
 
 Request:
 ```json
@@ -435,7 +435,7 @@ Response (200): Updated user profile
 ---
 
 ### Get Dashboard Statistics
-**GET** `/users/admin/statistics` 🔒 Admin
+**GET** `/users/admin/statistics`     Admin
 
 Response (200):
 ```json
@@ -454,7 +454,7 @@ Response (200):
 
 ---
 
-## 🎯 Risk Assessment Endpoints
+## Risk Assessment Endpoints
 
 ### Get Risk Assessment
 **GET** `/risk-assessment?latitude={lat}&longitude={lng}` (Public)
@@ -470,7 +470,7 @@ Response (200):
 
 ---
 
-## 🛠️ Needs Estimation Endpoints
+## Needs Estimation Endpoints
 
 ### Get Daily Needs Estimation
 **GET** `/needs-estimation?zoneId={id}` (Public)
@@ -509,18 +509,18 @@ Response (200):
 
 | Feature | Admin | User | Responder | Public |
 |---------|-------|------|-----------|--------|
-| View zones | ✅ | ✅ | ✅ | ✅ |
-| Create zone | ✅ | ❌ | ❌ | ❌ |
-| Edit zone | ✅ | ❌ | ❌ | ❌ |
-| Delete zone | ✅ | ❌ | ❌ | ❌ |
-| Create contribution | ✅ | ✅ | ✅ | ❌ |
-| Edit own contribution | ✅ | ✅ | ✅ | ❌ |
-| Edit others' contribution | ✅ | ❌ | ❌ | ❌ |
-| Delete own contribution | ✅ | ✅ | ✅ | ❌ |
-| Delete others' contribution | ✅ | ❌ | ❌ | ❌ |
-| Manage users | ✅ | ❌ | ❌ | ❌ |
-| View admin dashboard | ✅ | ❌ | ❌ | ❌ |
-| Update own profile | ✅ | ✅ | ✅ | ❌ |
+| View zones |  ✓ |  ✓ |  ✓ |  ✓ |
+| Create zone |  ✓ |  x |  x |  x |
+| Edit zone |  ✓ |  x |  x |  x |
+| Delete zone |  ✓ |  x |  x |  x |
+| Create contribution |  ✓ |  ✓ |  ✓ |  x |
+| Edit own contribution |  ✓ |  ✓ |  ✓ |  x |
+| Edit others' contribution |  ✓ |  x |  x |  x |
+| Delete own contribution |  ✓ |  ✓ |  ✓ |  x |
+| Delete others' contribution |  ✓ |  x |  x |  x |
+| Manage users |  ✓ |  x |  x |  x |
+| View admin dashboard |  ✓ |  x |  x |  x |
+| Update own profile |  ✓ |  ✓ |  ✓ |  x |
 
 ---
 
@@ -662,52 +662,52 @@ CREATE TABLE environmental_data (
 ## Features
 
 ### 1. User Authentication
-- ✅ Sign up with Email/Password
-- ✅ Secure JWT-based authentication
-- ✅ Token stored in localStorage
-- ✅ Automatic token refresh on app load
+-  ✓ Sign up with Email/Password
+-  ✓ Secure JWT-based authentication
+-  ✓ Token stored in localStorage
+-  ✓ Automatic token refresh on app load
 
 ### 2. Dashboard
-- ✅ Real-time weather data display (rainfall, temperature, humidity)
-- ✅ Disaster risk prediction based on location and weather
-- ✅ Visual risk meter displaying threat levels
-- ✅ Active zones display with participant counts
+-  ✓ Real-time weather data display (rainfall, temperature, humidity)
+-  ✓ Disaster risk prediction based on location and weather
+-  ✓ Visual risk meter displaying threat levels
+-  ✓ Active zones display with participant counts
 
 ### 3. Disaster Risk Prediction
-- ✅ Analyzes location coordinates
-- ✅ Processes rainfall and forecasted data
-- ✅ Calculates temperature and humidity patterns
-- ✅ Displays risk levels (Evacuate, High Alert, Active, Monitoring, Inactive)
+-  ✓ Analyzes location coordinates
+-  ✓ Processes rainfall and forecasted data
+-  ✓ Calculates temperature and humidity patterns
+-  ✓ Displays risk levels (Evacuate, High Alert, Active, Monitoring, Inactive)
 
 ### 4. Zone Management
-- ✅ Create zones (admin only)
-- ✅ Join existing zones
-- ✅ View all zones with filters
-- ✅ Search zones by location
-- ✅ View zone details and status
-- ✅ Track participant counts
+-  ✓ Create zones (admin only)
+-  ✓ Join existing zones
+-  ✓ View all zones with filters
+-  ✓ Search zones by location
+-  ✓ View zone details and status
+-  ✓ Track participant counts
 
 ### 5. Contribution Management
-- ✅ Create contributions (donations)
-- ✅ Track personal contributions
-- ✅ View zone needs estimation
-- ✅ Monitor total contributions
-- ✅ Edit own contributions
-- ✅ Delete own contributions
+-  ✓ Create contributions (donations)
+-  ✓ Track personal contributions
+-  ✓ View zone needs estimation
+-  ✓ Monitor total contributions
+-  ✓ Edit own contributions
+-  ✓ Delete own contributions
 
-### 6. Admin Features (NEW)
-- ✅ Full user management (CRUD)
-- ✅ Role assignment (USER, ADMIN, RESPONDER)
-- ✅ Comprehensive admin dashboard
-- ✅ Overall statistics and reporting
-- ✅ Full zone and contribution management
+### 6. Admin Features 
+-  ✓ Full user management (CRUD)
+-  ✓ Role assignment (USER, ADMIN, RESPONDER)
+-  ✓ Comprehensive admin dashboard
+-  ✓ Overall statistics and reporting
+-  ✓ Full zone and contribution management
 
 ### 7. Role-Based Access Control
-- ✅ Three-tier role system (ADMIN, USER, RESPONDER)
-- ✅ JWT-based role enforcement
-- ✅ Method-level security (`@PreAuthorize`)
-- ✅ Frontend role checks and UI guards
-- ✅ Contribution ownership validation
+-  ✓ Three-tier role system (ADMIN, USER, RESPONDER)
+-  ✓ JWT-based role enforcement
+-  ✓ Method-level security (`@PreAuthorize`)
+-  ✓ Frontend role checks and UI guards
+-  ✓ Contribution ownership validation
 
 ---
 
@@ -976,116 +976,6 @@ npx vite --port 5174
 
 ---
 
-## Implementation Checklist
-
-This checklist tracks the completed RBAC implementation and next steps:
-
-### ✅ Completed Backend Tasks
-- [x] Update JWT token to include role claim
-- [x] Add role extraction to JwtAuthenticationFilter
-- [x] Enable method-level security (@PreAuthorize)
-- [x] Update SecurityConfig with URL-based rules
-- [x] Create UserController with admin endpoints
-- [x] Implement UserService with CRUD operations
-- [x] Add role update functionality
-- [x] Add user deletion with cascade
-- [x] Implement dashboard statistics endpoint
-- [x] Add contribution ownership validation
-- [x] Add zone update/delete methods
-- [x] Update controllers with @PreAuthorize annotations
-- [x] Update AuthService to include role in JWT
-
-### ✅ Completed Frontend Tasks
-- [x] Add role checking methods to authStore
-- [x] Create roleUtils.js with permission helpers
-- [x] Create RoleGuard component
-- [x] Create AdminDashboardPage component
-- [x] Create UserManagementPage component
-- [x] Update Navigation with admin links
-- [x] Add role display in Navigation
-- [x] Create ProtectedRoute for admin pages
-
-### 🔄 Next Steps to Complete
-
-#### 1. Add Admin Routes to App.jsx
-```jsx
-// In client/src/App.jsx, add these routes:
-<Route path="/admin/dashboard" element={<AdminDashboard />} />
-<Route path="/admin/users" element={<UserManagementPage />} />
-```
-
-#### 2. Add LoadingSpinner Component Export
-Ensure LoadingSpinner is properly exported from common components:
-```jsx
-// client/src/components/common/LoadingSpinner.jsx
-export const LoadingSpinner = () => { ... };
-```
-
-#### 3. Test Complete RBAC Flow
-1. Create test admin user via database or API
-2. Log in with admin account
-3. Navigate to /admin/dashboard
-4. Verify dashboard loads statistics
-5. Navigate to /admin/users
-6. Test user role update
-7. Test user deletion
-8. Log in as regular user
-9. Verify admin links are hidden
-
-#### 4. Add Frontend API Service Methods
-```javascript
-// Add these to client/src/services/api.js
-export const getAdminStatistics = () => api.get('/users/admin/statistics');
-export const getAllUsers = () => api.get('/users');
-export const updateUserRole = (userId, role) => 
-  api.put(`/users/${userId}/role`, { role });
-export const deleteUser = (userId) => api.delete(`/users/${userId}`);
-```
-
-#### 5. Create Admin Data Entry Page (Optional)
-- Form to create new admin users
-- Bulk import users from CSV
-- Reset user passwords
-
-#### 6. Add Audit Logging
-- Log all admin actions
-- Track zone modifications
-- Monitor contribution changes
-- Create audit table in database
-
-#### 7. Implement Permission Caching
-- Cache role information to reduce requests
-- Invalidate cache on role updates
-- Use interceptors for efficient caching
-
-#### 8. Add Confirmation Dialogs
-- Confirm before deleting users
-- Confirm before role changes
-- Confirm zone deletions
-
-#### 9. Create Emergency Responder Features
-- Special dashboard for responders
-- Real-time zone updates
-- Priority notifications
-
-#### 10. Add Test Data Script
-- Create seed data for development
-- Auto-generate test admin accounts
-- Pre-populate zones and contributions
-
-#### 11. Security Hardening
-- Add rate limiting to login endpoint
-- Implement CSRF protection
-- Add password complexity validation
-- Implement account lockout after failed attempts
-
-#### 12. Documentation Completion
-- API endpoint testing with curl/Postman
-- User role workflow diagrams
-- Admin operation guides
-
----
-
 ## Testing Recommendations
 
 ### Admin Account Testing
@@ -1122,11 +1012,11 @@ export const deleteUser = (userId) => api.delete(`/users/${userId}`);
 
 ## Security Notes
 
-- ✅ Role is extracted from JWT and added to Spring Security context
-- ✅ `@PreAuthorize` annotations enforce method-level security
-- ✅ URL patterns restrict access at filter level
-- ✅ Ownership checks prevent cross-user data access
-- ✅ Admin role required for user/zone management
+-  ✓ Role is extracted from JWT and added to Spring Security context
+-  ✓ `@PreAuthorize` annotations enforce method-level security
+-  ✓ URL patterns restrict access at filter level
+-  ✓ Ownership checks prevent cross-user data access
+-  ✓ Admin role required for user/zone management
 - ⚠️ **Important:** Always validate role on backend, never trust frontend role claims
 - ⚠️ Use HTTPS in production
 - ⚠️ Rotate JWT secret regularly
