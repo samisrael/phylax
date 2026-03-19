@@ -1,212 +1,232 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Cloud, 
-  Thermometer, 
-  Droplets, 
-  CloudRain, 
-  MapPin, 
-  AlertTriangle,
-  LogOut,
-  TrendingUp,
-  TrendingDown
-} from 'lucide-react';
-import '../styles/Dashboard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPlus,
+  faSpinner,
+  faMap,
+  faUsers,
+  faExclamationTriangle,
+  faHandHoldingHeart,
+} from '@fortawesome/free-solid-svg-icons';
+import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ZoneCard from '../components/zones/ZoneCard';
+import ZoneDetailModal from '../components/zones/ZoneDetailModal';
+import ContributionModal from '../components/contributions/ContributionModal';
+import { zonesAPI, riskAssessmentAPI } from '../services/api';
+import { formatNumber } from '../utils/helpers';
+import useAuthStore from '../store/authStore';
 
-const Dashboard = ({ user, onLogout }) => {
-  const navigate = useNavigate();
-  const [weatherData, setWeatherData] = useState({
-    rainfall3Days: 45.2,
-    temperature: 28.5,
-    humidity: 72,
-    expectedRainfall: 85.3,
-    riskLevel: 'Most Expected',
-    riskScore: 78
+export default function Dashboard() {
+  const [zones, setZones] = useState([]);
+  const [stats, setStats] = useState({
+    totalZones: 0,
+    activeZones: 0,
+    totalPopulation: 0,
+    highRiskZones: 0,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedZone, setSelectedZone] = useState(null);
+  const [contributionZoneId, setContributionZoneId] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
 
-  const [activeZones, setActiveZones] = useState([
-    { id: 1, name: 'Chennai Flood Zone', users: 156, type: 'flood' },
-    { id: 2, name: 'Coimbatore Landslide Alert', users: 89, type: 'landslide' },
-    { id: 3, name: 'Madurai Emergency', users: 234, type: 'flood' }
-  ]);
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const getRiskColor = (level) => {
-    const colors = {
-      'Evacuate Immediately': '#ff0000',
-      'Most Expected': '#ff4500',
-      'Expected': '#ff8c00',
-      'Likely': '#ffa500',
-      'Unlikely': '#90ee90'
-    };
-    return colors[level] || '#ffa500';
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await zonesAPI.getAllZones();
+      const zonesData = response.data || [];
+      setZones(zonesData);
+
+      // Calculate stats
+      const activeZones = zonesData.filter(z => z.status === 'ACTIVE').length;
+      const totalPopulation = zonesData.reduce((sum, z) => sum + (z.populationEstimate || 0), 0);
+      const highRiskZones = zonesData.filter(z => z.riskScore >= 6).length;
+
+      setStats({
+        totalZones: zonesData.length,
+        activeZones,
+        totalPopulation,
+        highRiskZones,
+      });
+    } catch (error) {
+      toast.error('Failed to load dashboard data');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const handleZoneClick = (zone) => {
+    setSelectedZone(zone);
+  };
+
+  const handleContributionClick = (zoneId) => {
+    setContributionZoneId(zoneId);
+  };
+
+  const handleContributionSuccess = () => {
+    loadData();
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner text="Loading dashboard..." />;
+  }
+
   return (
-    <div className="dashboard">
-      <nav className="dashboard-nav">
-        <div className="nav-brand">
-          <AlertTriangle size={24} />
-          <span>Disaster Management</span>
-        </div>
-        <div className="nav-user">
-          <span>{user?.name || 'User'}</span>
-          <button onClick={onLogout} className="logout-btn">
-            <LogOut size={20} />
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              Welcome back, {user?.name}
+            </h1>
+            <p className="text-gray-600">
+              Here's an overview of disaster zones and response efforts
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/zones/create')}
+            className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            Create Zone
           </button>
         </div>
-      </nav>
 
-      <div className="dashboard-content">
-        <div className="dashboard-header">
-          <div className="location-info">
-            <MapPin size={20} />
-            <span>{user?.location || 'Chennai, Tamil Nadu'}</span>
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Total Zones */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Total Zones</p>
+                <p className="text-3xl font-bold text-gray-800 mt-1">
+                  {stats.totalZones}
+                </p>
+              </div>
+              <FontAwesomeIcon
+                icon={faMap}
+                size="2x"
+                className="text-primary-600 opacity-20"
+              />
+            </div>
           </div>
-          <div className="current-time">
-            {new Date().toLocaleString('en-US', { 
-              dateStyle: 'full', 
-              timeStyle: 'short' 
-            })}
+
+          {/* Active Zones */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Active Zones</p>
+                <p className="text-3xl font-bold text-success-600 mt-1">
+                  {stats.activeZones}
+                </p>
+              </div>
+              <FontAwesomeIcon
+                icon={faMap}
+                size="2x"
+                className="text-success-600 opacity-20"
+              />
+            </div>
+          </div>
+
+          {/* Affected Population */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Affected Population</p>
+                <p className="text-3xl font-bold text-gray-800 mt-1">
+                  {formatNumber(stats.totalPopulation)}
+                </p>
+              </div>
+              <FontAwesomeIcon
+                icon={faUsers}
+                size="2x"
+                className="text-blue-600 opacity-20"
+              />
+            </div>
+          </div>
+
+          {/* High Risk Zones */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">High Risk Zones</p>
+                <p className="text-3xl font-bold text-danger-600 mt-1">
+                  {stats.highRiskZones}
+                </p>
+              </div>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                size="2x"
+                className="text-danger-600 opacity-20"
+              />
+            </div>
           </div>
         </div>
 
-        <section className="weather-section">
-          <h2>Live Weather Data</h2>
-          <div className="weather-cards">
-            <div className="weather-card">
-              <div className="card-icon">
-                <CloudRain size={32} color="#4a9eff" />
-              </div>
-              <div className="card-content">
-                <h3>Rainfall (Last 3 Days)</h3>
-                <p className="card-value">{weatherData.rainfall3Days} mm</p>
-                <div className="trend">
-                  <TrendingUp size={16} color="#ff4500" />
-                  <span>Increasing</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="weather-card">
-              <div className="card-icon">
-                <Thermometer size={32} color="#ff6b6b" />
-              </div>
-              <div className="card-content">
-                <h3>Temperature</h3>
-                <p className="card-value">{weatherData.temperature}°C</p>
-                <div className="trend">
-                  <TrendingDown size={16} color="#4a9eff" />
-                  <span>Normal</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="weather-card">
-              <div className="card-icon">
-                <Droplets size={32} color="#4ecdc4" />
-              </div>
-              <div className="card-content">
-                <h3>Humidity</h3>
-                <p className="card-value">{weatherData.humidity}%</p>
-                <div className="trend">
-                  <TrendingUp size={16} color="#ff4500" />
-                  <span>High</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="weather-card">
-              <div className="card-icon">
-                <Cloud size={32} color="#a29bfe" />
-              </div>
-              <div className="card-content">
-                <h3>Expected Rainfall (2-5 Days)</h3>
-                <p className="card-value">{weatherData.expectedRainfall} mm</p>
-                <div className="trend">
-                  <TrendingUp size={16} color="#ff0000" />
-                  <span>Alert</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="risk-section">
-          <h2>Disaster Risk Assessment</h2>
-          <div className="risk-card">
-            <div className="risk-meter">
-              <div className="speedometer">
-                <div 
-                  className="speedometer-fill" 
-                  style={{ 
-                    width: `${weatherData.riskScore}%`,
-                    background: getRiskColor(weatherData.riskLevel)
-                  }}
-                />
-              </div>
-              <div className="risk-level" style={{ color: getRiskColor(weatherData.riskLevel) }}>
-                {weatherData.riskLevel}
-              </div>
-              <div className="risk-score">Risk Score: {weatherData.riskScore}%</div>
-            </div>
-            <div className="risk-factors">
-              <h3>Factors Analyzed:</h3>
-              <ul>
-                <li>✓ Location coordinates</li>
-                <li>✓ Recent rainfall (45.2mm)</li>
-                <li>✓ Forecasted rainfall (85.3mm)</li>
-                <li>✓ Temperature & humidity levels</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section className="zone-section">
-          <h2>Zone Options</h2>
-          <div className="zone-buttons">
-            <button 
-              className="zone-btn create"
-              onClick={() => navigate('/create-zone')}
+        {/* Recent Zones */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Recent Zones
+            </h2>
+            <button
+              onClick={() => navigate('/zones')}
+              className="text-primary-600 hover:text-primary-700 font-medium"
             >
-              Create a Zone
-            </button>
-            <button 
-              className="zone-btn join"
-              onClick={() => navigate('/join-zone')}
-            >
-              Join a Zone
-            </button>
-            <button 
-              className="zone-btn view"
-              onClick={() => navigate('/view-zones')}
-            >
-              View Existing Zones
+              View All
             </button>
           </div>
-        </section>
 
-        <section className="active-zones-section">
-          <h2>Active Zones (30+ Users)</h2>
-          <div className="active-zones-list">
-            {activeZones.map(zone => (
-              <div 
-                key={zone.id} 
-                className="active-zone-card"
-                onClick={() => navigate(`/zone/${zone.id}`)}
+          {zones.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {zones.slice(0, 6).map((zone) => (
+                <div key={zone.id} onClick={() => handleZoneClick(zone)}>
+                  <ZoneCard zone={zone} onClick={() => handleZoneClick(zone)} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <FontAwesomeIcon
+                icon={faMap}
+                size="3x"
+                className="text-gray-300 mb-4"
+              />
+              <p className="text-gray-600 text-lg">
+                No zones yet. Be the first to create one!
+              </p>
+              <button
+                onClick={() => navigate('/zones/create')}
+                className="mt-4 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
-                <div className="zone-info">
-                  <h3>{zone.name}</h3>
-                  <p className="zone-type">Type: {zone.type}</p>
-                  <p className="zone-users">{zone.users} people affected</p>
-                </div>
-                <button className="join-btn">View Zone →</button>
-              </div>
-            ))}
-          </div>
-        </section>
+                Create the First Zone
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Modals */}
+      <ZoneDetailModal
+        zone={selectedZone}
+        isOpen={!!selectedZone}
+        onClose={() => setSelectedZone(null)}
+        onContribute={handleContributionClick}
+      />
+      <ContributionModal
+        zoneId={contributionZoneId}
+        isOpen={!!contributionZoneId}
+        onClose={() => setContributionZoneId(null)}
+        onSuccess={handleContributionSuccess}
+      />
     </div>
   );
-};
-
-export default Dashboard;
+}

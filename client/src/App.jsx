@@ -1,80 +1,123 @@
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import useAuthStore from './store/authStore';
+import ProtectedRoute from './components/routes/ProtectedRoute';
+import Layout from './components/layout/Layout';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
-import CreateZone from './pages/CreateZone';
-import JoinZone from './pages/JoinZone';
-import ZonePage from './pages/ZonePage';
-import ViewZones from './pages/ViewZones';
+import ZonesPage from './pages/ZonesPage';
+import ZoneDetailPage from './pages/ZoneDetailPage';
+import CreateZonePage from './pages/CreateZonePage';
+import ContributionsPage from './pages/ContributionsPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import UserManagementPage from './pages/UserManagementPage';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+// Role-based route guard
+const AdminRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuthStore();
+  
+  if (!isAuthenticated || user?.role !== 'ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
 
-  const handleLogin = (userData) => {
-    setIsAuthenticated(true);
-    setUser(userData);
-  };
+export default function App() {
+  const { initializeAuth } = useAuthStore();
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-  };
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   return (
     <Router>
       <Routes>
-        <Route 
-          path="/" 
-          element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard" /> : 
-            <LandingPage onLogin={handleLogin} />
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            isAuthenticated ? 
-            <Dashboard user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/" />
-          } 
-        />
-        <Route 
-          path="/create-zone" 
-          element={
-            isAuthenticated ? 
-            <CreateZone user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/" />
-          } 
-        />
-        <Route 
-          path="/join-zone" 
-          element={
-            isAuthenticated ? 
-            <JoinZone user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/" />
-          } 
-        />
-        <Route 
-          path="/view-zones" 
-          element={
-            isAuthenticated ? 
-            <ViewZones user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/" />
-          } 
-        />
-        <Route 
-          path="/zone/:zoneId" 
-          element={
-            isAuthenticated ? 
-            <ZonePage user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/" />
-          } 
-        />
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected Routes */}
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/zones"
+            element={
+              <ProtectedRoute>
+                <ZonesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/zones/:id"
+            element={
+              <ProtectedRoute>
+                <ZoneDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/zones/create"
+            element={
+              <ProtectedRoute>
+                <CreateZonePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contributions"
+            element={
+              <ProtectedRoute>
+                <ContributionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminDashboardPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <UserManagementPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+
+        {/* Catch all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
 }
-
-export default App;

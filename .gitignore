@@ -1,4 +1,85 @@
 server/src/main/resources/application.properties:10application.properties
 server/client_secret_*.json
-
+.env
 server/client_secret_261588093008-87s3ntd88cta8882teuadgu19d27ou29.apps.googleusercontent.com.json
+
+# =========================
+# Node / React frontend
+# =========================
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# testing
+coverage/
+*.lcov
+
+# production
+build/
+dist/
+.tmp/
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# editor directories and files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# =========================
+# Java / Spring Boot backend
+# =========================
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Spring Boot / Maven / Gradle
+target/
+build/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse / IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+*.class
+*.jar
+*.war
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# =========================
+# Environment files
+# =========================
+.env
